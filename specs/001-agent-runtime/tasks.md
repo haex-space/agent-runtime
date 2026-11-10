@@ -113,7 +113,9 @@ description: "Implementation tasks for Extensible Agent Runtime"
 
 - [ ] T032 [P] Document host authorization, package trust, child inheritance, event redaction, and cancellation guarantees in `docs/security-boundaries.md`.
 - [ ] T033 Update `README.md` and `specs/001-agent-runtime/quickstart.md` with the implemented host example, local llama.cpp setup, package workflow, and evaluation commands.
-- [ ] T034 Review `specs/001-agent-runtime/spec.md` FR-001 through FR-020 and SC-001 through SC-008 against `crates/`, `examples/`, `docs/`, and CLI behavior; record any remaining gaps in `specs/001-agent-runtime/tasks.md` before declaring the feature complete.
+- [ ] T034 [P] Add a Criterion benchmark for the fixture-backed no-op model/tool cycle and report p95 runtime scheduling overhead against the 20 ms goal in `benches/runtime_overhead.rs`, `Cargo.toml`, and `docs/performance.md`.
+- [ ] T035 [P] Validate the targeted Qwen and Gemma GGUF model families through both the local HTTP-server and embedded llama.cpp paths; document verified model revisions, format requirements, and backend features in `docs/local-model-compatibility.md` and `examples/README.md`.
+- [ ] T036 Review `specs/001-agent-runtime/spec.md` FR-001 through FR-020 and SC-001 through SC-008 against `crates/`, `examples/`, `docs/`, benchmarks, and CLI behavior; record any remaining gaps in `specs/001-agent-runtime/tasks.md` before declaring the feature complete.
 
 ---
 
@@ -155,7 +157,7 @@ flowchart TD
 - **US1**: T011 (HTTP adapter) and T012 (embedded adapter) can proceed in parallel after Phase 2. T014 and T015 can be authored in parallel after T013.
 - **US2**: T021 package examples can be authored in parallel with resolver and CLI work after manifest fields are agreed.
 - **US4**: T031 fixture authoring can proceed in parallel with evaluator/report implementation once the case schema is fixed.
-- **Polish**: T032 security documentation can proceed alongside the final user-story phase; T033 follows the actual command/API surfaces.
+- **Polish**: T032 security documentation can proceed alongside the final user-story phase; T033 follows the actual command/API surfaces. T034 runtime benchmarking and T035 local-model compatibility validation can proceed in parallel after US1's adapters are available.
 
 ### Parallel Execution Examples
 
@@ -163,6 +165,7 @@ flowchart TD
 - **US2**: After T016 fixes the manifest shape, T017 (resolver) and T021 (example package files) can proceed in parallel; T018 follows T016/T017.
 - **US3**: No story tasks are marked `[P]`; task-state, budget, scheduler, cancellation, and result handoff share lifecycle contracts and should proceed in the listed order.
 - **US4**: After T027 fixes the evaluation schema, T028 (fixture adapters) and T031 (fixture cases) can proceed in parallel; T029 integrates them.
+- **Polish**: After US1, T034 (runtime overhead benchmark) and T035 (local-model compatibility matrix) can proceed in parallel; T036 performs the final coverage audit.
 
 ## Implementation Strategy
 
@@ -173,6 +176,7 @@ flowchart TD
 3. Add the core bounded delegation slice from US3 before calling the project product-ready; subagents are a defining requirement, not an optional later enhancement.
 4. Complete US2 package composition before sharing user-authored harnesses broadly.
 5. Complete US4 before using harness package changes as a routine optimization workflow.
+6. Verify target local-model compatibility and runtime-overhead goals before release.
 
 ### Incremental Delivery
 
